@@ -1,0 +1,34 @@
+{
+  "name": "cordova-plugin-bluebird-reader",
+  "version": "0.1.0",
+  "description": "Cordova plugin for communication with Bluebird rfid/barcode readers.",
+  "cordova": {
+    "id": "cordova-plugin-bluebird-reader",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader.git"
+  },
+  "keywords": [
+    "rfid",
+    "barcode",
+    "reader",
+    "bluebird",
+    "ecosystem:cordova"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=5.0.0"
+    }
+  ],
+  "author": "Precious Biscuit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader/issues"
+  },
+  "homepage": "https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader#readme"
+}

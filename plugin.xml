@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-bluebird-reader"
+        version="0.1.0">
+  <name>Bluebird RFID/Barcode Reader Cordova Plugin</name>
+  <description>Cordova plugin for communication with Bluebird rfid/barcode readers.</description>
+  <author>Precious Biscuit</author>
+  <license>MIT</license>
+  <keywords>rfid, barcode, reader, bluebird</keywords>
+  <repo>https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader.git</repo>
+  <issue>https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader/issues</issue>
+
+  <engines>
+    <engine name="cordova" version=">=5.0.0" />
+  </engines>
+
+  <js-module src="www/bluebirdReader.js" name="BluebirdReader">
+    <clobbers target="bluebirdReader" />
+  </js-module>
+
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/widget">
+      <feature name="BluebirdReader">
+        <param name="android-package" value="land.cookie.cordova.plugin.bluebirdreader.BluebirdReader" />
+      </feature>
+    </config-file>
+
+    <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
+      <uses-permission android:name="android.permission.BLUETOOTH" />
+      <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    </config-file>
+
+    <framework src="src/android/BluebirdReader.gradle" custom="true" type="gradleReference" />
+    <source-file src="src/android/libs/bluebird-sled.jar" target-dir="libs/" />
+
+    <source-file src="src/android/BluebirdReader.java"
+                 target-dir="src/land/cookie/cordova/plugin/bluebirdreader" />
+    <!--
+    <source-file src="src/android/NotificationReceiver.java"
+                 target-dir="src/land/cookie/cordova/plugin/bluebirdreader" />
+    <source-file src="src/android/barcode/BarcodeTypes.java"
+                 target-dir="src/land/cookie/cordova/plugin/bluebirdreader/barcode" />
+    -->
+  </platform>
+</plugin>
