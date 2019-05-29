@@ -1,3 +1,5 @@
+/* global cordova, module */
+
 const serviceName = 'BluebirdReader'
 
 const bluebirdReader = {
