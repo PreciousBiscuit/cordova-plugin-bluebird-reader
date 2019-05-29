@@ -1,4 +1,4 @@
-package land.cookie.cordova.plugin.bluebirdreader; // TODO
+package land.cookie.cordova.plugin.bluebirdreader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,7 @@ public class BluebirdReader extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute (
-        String action, final JSONArray args, final CallbackContext callbackContext
-    ) throws JSONException {
+    public boolean execute (String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         if ("openCommunication".equals(action))
             openAction(callbackContext);
         else if ("closeCommunication".equals(action))
@@ -61,7 +59,7 @@ public class BluebirdReader extends CordovaPlugin {
 
     private boolean openAction(CallbackContext callbackContext) {
         mIsCommunicationOpened = mReader.SD_Open();
-        if (mIsCommunicationOpened == true)
+        if (mIsCommunicationOpened)
             callbackContext.success("success");
         else
             callbackContext.error("Unable to open a communication with a reader.");
@@ -70,7 +68,7 @@ public class BluebirdReader extends CordovaPlugin {
 
     private boolean closeAction(CallbackContext callbackContext) {
         mIsCommunicationOpened = mReader.SD_Close();
-        if (mIsCommunicationOpened == true)
+        if (mIsCommunicationOpened)
             callbackContext.success("success");
         else
             callbackContext.error("Unable to close a communication with a reader.");
@@ -139,5 +137,20 @@ public class BluebirdReader extends CordovaPlugin {
 
         mSubscriptionCallbackCtx = null;
         callbackContext.success("success");
+    }
+
+    public void notifyBluetoothAction(String action) {
+        if (mConnectionCallbackCtx == null)
+            return
+
+        if ("connected".equals(action)) {
+            PluginResult message = new PluginResult(PluginResult.Status.OK, "connected");
+            message.setKeepCallback(true);
+            mConnectionCallbackCtx.sendPluginResult(message);
+        }
+        else if ("disconnected".equals(action)) {
+            PluginResult message = new PluginResult(PluginResult.Status.ERROR, "disconnected");
+            mConnectionCallbackCtx.sendPluginResult(message);
+        }
     }
 }
