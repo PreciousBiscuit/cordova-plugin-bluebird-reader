@@ -3,12 +3,6 @@
 const serviceName = 'BluebirdReader'
 
 const bluebirdReader = {
-  openCommunication(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, serviceName, arguments.callee.name, []);
-  },
-  closeCommunication(successCallback, errorCallback) {
-    cordova.exec(successCallback, errorCallback, serviceName, arguments.callee.name, []);
-  },
   connect(successCallback, errorCallback, params) {
     cordova.exec(successCallback, errorCallback, serviceName, arguments.callee.name, [params]);
   },
