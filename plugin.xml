@@ -3,7 +3,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-bluebird-reader"
-        version="0.1.0">
+        version="0.2.0">
   <name>Bluebird RFID/Barcode Reader Cordova Plugin</name>
   <description>Cordova plugin for communication with Bluebird rfid/barcode readers.</description>
   <author>Precious Biscuit</author>
@@ -32,16 +32,11 @@
       <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     </config-file>
 
-    <!-- <framework src="src/android/BluebirdReader.gradle" custom="true" type="gradleReference" /> -->
     <lib-file src="src/android/libs/bluebird-sled.jar" />
 
     <source-file src="src/android/BluebirdReader.java"
                  target-dir="src/land/cookie/cordova/plugin/bluebirdreader" />
     <source-file src="src/android/BluebirdMessageHandler.java"
                  target-dir="src/land/cookie/cordova/plugin/bluebirdreader" />
-    <!--
-    <source-file src="src/android/barcode/BarcodeTypes.java"
-                 target-dir="src/land/cookie/cordova/plugin/bluebirdreader/barcode" />
-    -->
   </platform>
 </plugin>
