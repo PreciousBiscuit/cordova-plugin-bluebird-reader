@@ -3,6 +3,7 @@ package land.cookie.cordova.plugin.bluebirdreader;
 import android.util.Log;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Bundle;
 import co.kr.bluebird.sled.SDConsts;
 
 public class BluebirdMessageHandler extends Handler {
