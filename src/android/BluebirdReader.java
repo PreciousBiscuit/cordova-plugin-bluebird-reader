@@ -93,6 +93,11 @@ public class BluebirdReader extends CordovaPlugin {
         }
     }
 
+    protected void disconnectReader() {
+        mReader.BT_Disconnect();
+        notifyReaderDisconnected();
+    }
+
     protected void startRfidReading() {
         if (mSubscriptionCallbackCtx == null)
             return;
@@ -133,13 +138,26 @@ public class BluebirdReader extends CordovaPlugin {
         }
     }
 
-    // protected void notifyBarcodeRead() {
-    //     // TODO
-        // JSONObject barcode = new JSONObject();
-        // barcode.put("type", barcodeType);
-        // barcode.put("data", barcodeData);
-        // data.put("barcode", barcode);
-    // }
+    protected void notifyBarcodeReadStart() {
+        if (mSubscriptionCallbackCtx == null)
+            return;
+
+        sendReadAction("barcodeReadStart");
+    }
+
+    protected void notifyBarcodeReadStop() {
+        if (mSubscriptionCallbackCtx == null)
+            return;
+
+        sendReadAction("barcodeReadStop");
+    }
+
+    protected void notifyBarcodeRead(String barcodeData) {
+        Pair<String, String>[] data = parseBarcodeData(barcodeData);
+        if (data != null) {
+            sendReadAction("barcodeRead", data);
+        }
+    }
 
     private void connectAction(JSONArray params, CallbackContext callbackContext) {
         String address = params.optString(0);
@@ -222,18 +240,50 @@ public class BluebirdReader extends CordovaPlugin {
 
     private Pair<String, String>[] parseRfidData(String rfidData) {
         if (rfidData == null || rfidData.isEmpty()) {
-            Log.e(TAG, "ERROR - Received incorrect RFID Data.");
+            Log.e(TAG, "ERROR - Received incorrect RFID data.");
             return null;
         }
 
         String[] parts = rfidData.split(";");
         Pair<String, String>[] data = new Pair[parts.length];
-        data[0] = new Pair("data", parts[0]);
+        // There is some magical number (3000) at the beginning of the RFID tag.
+        data[0] = new Pair("data", parts[0].replaceFirst("^3000", ""));
 
         for (int i = 1; i < parts.length; i++) {
             String[] info = parts[i].split(":");
             if (info.length == 2)
                 data[i] = new Pair(info[0], info[1]);
+        }
+        return data;
+    }
+
+    private Pair<String, String>[] parseBarcodeData(String barcodeData) {
+        if (barcodeData == null || barcodeData.isEmpty()) {
+            Log.e(TAG, "ERROR - Received incorrect barcode data.");
+            return null;
+        }
+
+        String[] parts = barcodeData.split(";");
+        Pair<String, String>[] data = new Pair[parts.length];
+        data[0] = new Pair("data", parts[0]);
+
+        for (int i = 1; i < parts.length; i++) {
+            String[] info = parts[i].split(":");
+            if (info.length == 2) {
+                if (info[0] == "sym") {
+                    try {
+                        int type = Integer.parseInt(info[1]);
+                        data[i] = new Pair("type", BarcodeTypes.getName(type));
+                    }
+                    catch (NumberFormatException e) {
+                        Log.e(TAG, "ERROR - Received incorrect barcode type.");
+                        data[i] = new Pair("type", "Unknown");
+                    }
+                }
+                else {
+                    data[i] = new Pair(info[0], info[1]);
+                }
+            }
         }
         return data;
     }

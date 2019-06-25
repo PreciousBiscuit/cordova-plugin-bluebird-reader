@@ -14,9 +14,9 @@ This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900
 * Bluebird SDK issue - Disconnecting different bluetooth device disconnects bluebird reader as well.
 
 ## Notice
-* Reading of RFID is working.
+* Reading of RFID tags and barcodes is working.
 
-## TODO (Barcode, Documentation)
+## TODO (Documentation)
 Will be done soon (I hope).
 
 ## Install

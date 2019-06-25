@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-bluebird-reader",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Cordova plugin for communication with Bluebird rfid/barcode readers.",
   "cordova": {
     "id": "cordova-plugin-bluebird-reader",
