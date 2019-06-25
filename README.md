@@ -17,7 +17,7 @@ This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900
 * Reading of RFID is working.
 
 ## TODO (Barcode, Documentation)
-Will be done at the of a June.
+Will be done soon (I hope).
 
 ## Install
 `cordova plugin add https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader.git`

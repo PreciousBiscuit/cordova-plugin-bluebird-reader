@@ -23,6 +23,7 @@ public class BluebirdReader extends CordovaPlugin {
     private boolean mIsConnecting = false;
     private CallbackContext mConnectionCallbackCtx = null;
     private CallbackContext mSubscriptionCallbackCtx = null;
+    private CallbackContext mDisconnectCallbackCtx = null;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -54,6 +55,7 @@ public class BluebirdReader extends CordovaPlugin {
         mReader = null;
         mConnectionCallbackCtx = null;
         mSubscriptionCallbackCtx = null;
+        mDisconnectCallbackCtx = null;
         mMessageHandler = null;
     }
 
@@ -66,17 +68,22 @@ public class BluebirdReader extends CordovaPlugin {
         mConnectionCallbackCtx.sendPluginResult(message);
 
         mIsConnecting = false;
+        mDisconnectCallbackCtx = null;
     }
 
     protected void notifyReaderDisconnected() {
         if (mConnectionCallbackCtx == null)
             return;
 
+        if (mDisconnectCallbackCtx != null)
+            mDisconnectCallbackCtx.success("success");
+
         PluginResult message = new PluginResult(PluginResult.Status.ERROR, "disconnected");
         mConnectionCallbackCtx.sendPluginResult(message);
 
         mSubscriptionCallbackCtx = null;
         mConnectionCallbackCtx = null;
+        mDisconnectCallbackCtx = null;
         mIsConnecting = false;
     }
 
@@ -164,7 +171,7 @@ public class BluebirdReader extends CordovaPlugin {
         int eResult = mReader.BT_Disconnect();
 
         if (eResult == SDConsts.BTResult.SUCCESS) {
-            callbackContext.success("success");
+            mDisconnectCallbackCtx = callbackContext;
             return;
         }
 

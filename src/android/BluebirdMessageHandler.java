@@ -16,17 +16,17 @@ public class BluebirdMessageHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        // Log.d(TAG, "~~~~~ Message ~~~~~");
-        // Log.d(TAG, Integer.toString(msg.what));
-        // Log.d(TAG, Integer.toString(msg.arg1));
-        // Log.d(TAG, Integer.toString(msg.arg2));
-        // Bundle bundle = msg.getData();
-        // if (bundle != null) {
-        //     for (String key : bundle.keySet()) {
-        //       Log.d (TAG, key);
-        //     }
-        // }
-        // Log.d(TAG, "~~~~~ /Message ~~~~~");
+        Log.d(TAG, "~~~~~ Message ~~~~~");
+        Log.d(TAG, Integer.toString(msg.what));
+        Log.d(TAG, Integer.toString(msg.arg1));
+        Log.d(TAG, Integer.toString(msg.arg2));
+        Bundle bundle = msg.getData();
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+              Log.d (TAG, key);
+            }
+        }
+        Log.d(TAG, "~~~~~ /Message ~~~~~");
         switch (msg.what) {
         case SDConsts.Msg.BTMsg:
             switch (msg.arg1) {
