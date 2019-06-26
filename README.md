@@ -1,23 +1,21 @@
 # Bluebird RFID/Barcode Reader Plugin [Android]
-This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+.
+This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+ on Android.
 
 ## Requirements
 * Cordova 5.0.0 or higher
 * Android 4.1 or higher
 
 ## Limitations
-* iOS is not supported. I'm still waiting on response from Bluebird if they have any SDK for iOS that I could use for
+* iOS is not supported. I'm still waiting [2019-06-26] for response from Bluebird if they have any SDK for iOS that I 
+could 
+use for
  implementation.
 * Only one Bluebird reader can be connected.
+* This plugin does not handle searching for bluetooth devices.
 
 ## Issues
-* Bluebird SDK issue - Disconnecting different bluetooth device disconnects bluebird reader as well.
-
-## Notice
-* Reading of RFID tags and barcodes is working.
-
-## TODO (Documentation)
-Will be done soon (I hope).
+* Disconnecting different bluetooth device disconnects bluebird reader as well. There is an issue inside the library 
+that I had to use and there was no way around it.
 
 ## Install
 `cordova plugin add https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader.git`
@@ -29,9 +27,64 @@ Will be done soon (I hope).
 * [bluebirdReader.unsubscribe](#unsubscribe)
 
 ### connect
+Connects to a bluebird device. If device is disconnected, errorCallback would be called with "disconnected" message.
+
+`bluebirdReader.connect(successCallback, errorCallback, address)`
+
+* address - MAC address of bluebird device.
+
+##### Success
+"connected"
+
+##### Errors
+* Different error messages explaining what went wrong.
+* "disconnected" - when device was disconnected.
 
 ### disconnect
+Disconnects a bluebird device. It will call errorCallback from connect() with "disconnected" message.
+
+`bluebirdReader.disconnect(successCallback, errorCallback)`
+
+##### Success
+"success"
+
+##### Errors
+Different error messages explaining what went wrong.
 
 ### subscribe
+Subscribes for device events. Bluebird device can read the same RFID tag several times in a second and for all those 
+events is successCallback called. Duplicities are not handled.
+
+`bluebirdReader.subscribe(successCallback, errorCallback)`
+
+##### Success
+```
+{
+  action: <string>,
+  [data: <string>],
+  [rssi: <string>],
+  [type: <string>],
+  [error: <string>] 
+}
+```
+
+* action - ["rfidReadStart", "rfidReadStop", "rfidRead", "barcodeReadStart", "barcodeReadStop", "barcodeRead"]
+* data:
+    * RFID value - if "rfidRead" action
+    * barcode data - if "barcodeRead" action
+* rssi - rssi value for RFID tag in "rfidRead" action
+* type - barcode type in "barcodeRead" action
+* error - any action can have an error if something goes wrong
+
+##### Errors
+"No connected reader."
 
 ### unsubscribe
+`bluebirdReader.unsubscribe(successCallback, errorCallback)`
+
+##### Success
+* "success"
+* "No active subscription."
+
+##### Errors
+None
