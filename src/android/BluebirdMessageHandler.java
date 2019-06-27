@@ -83,6 +83,21 @@ public class BluebirdMessageHandler extends Handler {
             break;
             }
         break;
+        case SDConsts.Msg.BCMsg: // 2
+            switch (msg.arg1) {
+            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_PRESSED:
+                mReader.notifyBarcodeReadStart();
+            break;
+            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_RELEASED:
+                mReader.notifyBarcodeReadStop();
+            break;
+            case SDConsts.BCCmdMsg.BARCODE_READ:
+                if (msg.obj != null) {
+                    mReader.notifyBarcodeRead(msg.obj.toString());
+                }
+            break;
+            }
+        break;
         }
     }
 }
