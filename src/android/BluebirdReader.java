@@ -270,7 +270,7 @@ public class BluebirdReader extends CordovaPlugin {
         for (int i = 1; i < parts.length; i++) {
             String[] info = parts[i].split(":");
             if (info.length == 2) {
-                if (info[0] == "sym") {
+                if ("sym".equals(info[0])) {
                     try {
                         int type = Integer.parseInt(info[1]);
                         data[i] = new Pair("type", BarcodeTypes.getName(type));
