@@ -28,19 +28,19 @@ public class BluebirdMessageHandler extends Handler {
         switch (msg.what) {
         case SDConsts.Msg.BTMsg: // 3
             switch (msg.arg1) {
-            case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_STATE_CHANGED:
+            case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_STATE_CHANGED: // 58
                 if (msg.arg2 == 0)
                     mReader.notifyReaderMaybeDisconnected();
             break;
-            case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_ESTABLISHED:
+            case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_ESTABLISHED: // 60
                 mReader.notifyReaderConnected();
             break;
-            // case SDConsts.BTCmdMsg.SLED_BT_DISCONNECTED:
-            // case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_LOST:
-            case SDConsts.BTCmdMsg.SLED_BT_ACL_DISCONNECTED:
+            // case SDConsts.BTCmdMsg.SLED_BT_DISCONNECTED: // 61
+            // case SDConsts.BTCmdMsg.SLED_BT_CONNECTION_LOST: // 62
+            case SDConsts.BTCmdMsg.SLED_BT_ACL_DISCONNECTED: // 65
                 mReader.notifyReaderDisconnected();
             break;
-            case SDConsts.BTCmdMsg.SLED_BT_STATE_CHANGED: {
+            case SDConsts.BTCmdMsg.SLED_BT_STATE_CHANGED: { // 57
                 // Disconnect the reader when bluetooth is turned off.
                 // Somehow the reader manages to communicate with a mobile phone even though bluetooth is turned off.
                 BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -51,17 +51,17 @@ public class BluebirdMessageHandler extends Handler {
         break;
         case SDConsts.Msg.SDMsg: // 1
             switch (msg.arg1) {
-            case SDConsts.SDCmdMsg.TRIGGER_PRESSED:
+            case SDConsts.SDCmdMsg.TRIGGER_PRESSED: // 41
                 mReader.startRfidReading();
             break;
-            case SDConsts.SDCmdMsg.TRIGGER_RELEASED:
+            case SDConsts.SDCmdMsg.TRIGGER_RELEASED: // 42
                 mReader.stopRfidReading();
             break;
             }
         break;
         case SDConsts.Msg.RFMsg: // 0
             switch (msg.arg1) {
-            case SDConsts.RFCmdMsg.INVENTORY:
+            case SDConsts.RFCmdMsg.INVENTORY: // 5
                 if (msg.arg2 == SDConsts.RFResult.SUCCESS && msg.obj != null) {
                     mReader.notifyRfidRead(msg.obj.toString());
                 }
@@ -70,13 +70,13 @@ public class BluebirdMessageHandler extends Handler {
         break;
         case SDConsts.Msg.SBMsg: // 4
             switch (msg.arg1) {
-            case SDConsts.SBCmdMsg.BARCODE_TRIGGER_PRESSED_SLED:
+            case SDConsts.SBCmdMsg.BARCODE_TRIGGER_PRESSED_SLED: // 86
                 mReader.notifyBarcodeReadStart();
             break;
-            case SDConsts.SBCmdMsg.BARCODE_TRIGGER_RELEASED_SLED:
+            case SDConsts.SBCmdMsg.BARCODE_TRIGGER_RELEASED_SLED: // 87
                 mReader.notifyBarcodeReadStop();
             break;
-            case SDConsts.SBCmdMsg.BARCODE_READ:
+            case SDConsts.SBCmdMsg.BARCODE_READ: // 88
                 if (msg.obj != null) {
                     mReader.notifyBarcodeRead(msg.obj.toString());
                 }
@@ -85,13 +85,13 @@ public class BluebirdMessageHandler extends Handler {
         break;
         case SDConsts.Msg.BCMsg: // 2
             switch (msg.arg1) {
-            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_PRESSED:
+            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_PRESSED: // 81
                 mReader.notifyBarcodeReadStart();
             break;
-            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_RELEASED:
+            case SDConsts.BCCmdMsg.BARCODE_TRIGGER_RELEASED: // 82
                 mReader.notifyBarcodeReadStop();
             break;
-            case SDConsts.BCCmdMsg.BARCODE_READ:
+            case SDConsts.BCCmdMsg.BARCODE_READ: // 80
                 if (msg.obj != null) {
                     mReader.notifyBarcodeRead(msg.obj.toString());
                 }
