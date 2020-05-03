@@ -1,15 +1,13 @@
-# Bluebird RFID/Barcode Reader Plugin [Android]
-This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+ on Android.
+# Bluebird RFID/Barcode Reader Plugin
+This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+.
 
 ## Requirements
-* Cordova 5.0.0 or higher
-* Android 4.1 or higher
+* Cordova 6.4.0+
+* Android 4.1+
+* iOS 8.0+ [Not implemented yet]
 
 ## Limitations
-* iOS is not supported. I'm still waiting [2019-06-26] for response from Bluebird if they have any SDK for iOS that I 
-could 
-use for
- implementation.
+* iOS is not implemented yet.
 * Only one Bluebird reader can be connected.
 * This plugin does not handle searching for bluetooth devices.
 

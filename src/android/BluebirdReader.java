@@ -34,7 +34,9 @@ public class BluebirdReader extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        if ("connect".equals(action))
+        if ("search".equals(action))
+            searchAction(callbackContext);
+        else if ("connect".equals(action))
             connectAction(args, callbackContext);
         else if ("disconnect".equals(action))
             disconnectAction(callbackContext);
@@ -157,6 +159,10 @@ public class BluebirdReader extends CordovaPlugin {
         if (data != null) {
             sendReadAction("barcodeRead", data);
         }
+    }
+
+    private void searchAction(CallbackContext callbackContext) {
+      callbackContext.error("Not supported on Android");
     }
 
     private void connectAction(JSONArray params, CallbackContext callbackContext) {
