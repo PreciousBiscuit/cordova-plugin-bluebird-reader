@@ -20,6 +20,7 @@ public class BluebirdReader extends CordovaPlugin {
 
     private BTReader mReader = null;
     private BluebirdMessageHandler mMessageHandler = null;
+    private BluebirdCommands mCommands = null;
     private boolean mIsConnecting = false;
     private CallbackContext mConnectionCallbackCtx = null;
     private CallbackContext mSubscriptionCallbackCtx = null;
@@ -30,6 +31,7 @@ public class BluebirdReader extends CordovaPlugin {
         super.initialize(cordova, webView);
         mMessageHandler = new BluebirdMessageHandler(this);
         mReader = BTReader.getReader(cordova.getContext(), mMessageHandler);
+        mCommands = new BluebirdCommands();
     }
 
     @Override
@@ -44,6 +46,8 @@ public class BluebirdReader extends CordovaPlugin {
             subscribeAction(callbackContext);
         else if ("unsubscribe".equals(action))
             unsubscribeAction(callbackContext);
+        else if ("execute".equals(action))
+            executeAction(args, callbackContext);
         else
             return false;
         return true;
@@ -106,13 +110,13 @@ public class BluebirdReader extends CordovaPlugin {
 
         int eResult = mReader.RF_PerformInventory(true, false, false);
         if (eResult == SDConsts.RFResult.SUCCESS) {
-            sendReadAction("rfidReadStart");
+            sendEvent("rfidReadStart");
             return;
         }
 
         String error = getRfError(eResult, "Unable to start reading of RFID tags.");
         Pair<String, String>[] data = new Pair[] { new Pair("error", error) };
-        sendReadAction("rfidReadStart", data);
+        sendEvent("rfidReadStart", data);
     }
 
     protected void stopRfidReading() {
@@ -121,13 +125,13 @@ public class BluebirdReader extends CordovaPlugin {
 
         int eResult = mReader.RF_StopInventory();
         if (eResult == SDConsts.RFResult.SUCCESS) {
-            sendReadAction("rfidReadStop");
+            sendEvent("rfidReadStop");
             return;
         }
 
         String error = getRfError(eResult, "Unable to stop reading of RFID tags.");
         Pair<String, String>[] data = new Pair[] { new Pair("error", error) };
-        sendReadAction("rfidReadStop", data);
+        sendEvent("rfidReadStop", data);
     }
 
     protected void notifyRfidRead(String rfidData) {
@@ -136,7 +140,7 @@ public class BluebirdReader extends CordovaPlugin {
 
         Pair<String, String>[] data = parseRfidData(rfidData);
         if (data != null) {
-            sendReadAction("rfidRead", data);
+            sendEvent("rfidRead", data);
         }
     }
 
@@ -144,31 +148,56 @@ public class BluebirdReader extends CordovaPlugin {
         if (mSubscriptionCallbackCtx == null)
             return;
 
-        sendReadAction("barcodeReadStart");
+        sendEvent("barcodeReadStart");
     }
 
     protected void notifyBarcodeReadStop() {
         if (mSubscriptionCallbackCtx == null)
             return;
 
-        sendReadAction("barcodeReadStop");
+        sendEvent("barcodeReadStop");
     }
 
     protected void notifyBarcodeRead(String barcodeData) {
+        if (mSubscriptionCallbackCtx == null)
+            return;
+
         Pair<String, String>[] data = parseBarcodeData(barcodeData);
         if (data != null) {
-            sendReadAction("barcodeRead", data);
+            sendEvent("barcodeRead", data);
         }
     }
 
+    protected void notifyBatterLevel(int battery) {
+        if (mSubscriptionCallbackCtx == null)
+            return;
+
+        try {
+            JSONObject msgData = new JSONObject();
+            msgData.put("action", "battery");
+            msgData.put("level", battery);
+            sendEvent(msgData);
+        }
+        catch (JSONException ex) {
+            Log.e(TAG, "ERROR - Unable to send a battery event.");
+        }
+    }
+
+    protected void notifyRegionChange(String status) {
+        if (mSubscriptionCallbackCtx == null)
+            return;
+
+        sendEvent("regionChange" + Character.toUpperCase(status.charAt(0)) + status.substring(1));
+    }
+
     private void searchAction(CallbackContext callbackContext) {
-      callbackContext.error("Not supported on Android");
+        callbackContext.error("Not supported on Android");
     }
 
     private void connectAction(JSONArray params, CallbackContext callbackContext) {
         String address = params.optString(0);
         if (address == null || address.trim().isEmpty()) {
-            callbackContext.error("Device MAC address was not provided.");
+            callbackContext.error("Device MAC address was not specified.");
             return;
         }
 
@@ -220,11 +249,28 @@ public class BluebirdReader extends CordovaPlugin {
         mSubscriptionCallbackCtx = null;
     }
 
-    private void sendReadAction(String action) {
-        sendReadAction(action, null);
+    private void executeAction(JSONArray params, CallbackContext callbackContext) {
+        if (mConnectionCallbackCtx == null) {
+            callbackContext.error("No connected reader.");
+            return;
+        }
+
+        String command = params.optString(0);
+        if (command == null || command.trim().isEmpty()) {
+            callbackContext.error("Command was not provided.");
+            return;
+        }
+        params.remove(0);
+
+        PluginResult result = mCommands.execute(command, params, mReader);
+        callbackContext.sendPluginResult(result);
     }
 
-    private void sendReadAction(String action, Pair<String, String>[] data) {
+    private void sendEvent(String action) {
+        sendEvent(action, null);
+    }
+
+    private void sendEvent(String action, Pair<String, String>[] data) {
         try {
             JSONObject msgData = new JSONObject();
             msgData.put("action", action);
@@ -234,14 +280,17 @@ public class BluebirdReader extends CordovaPlugin {
                     msgData.put(pair.first, pair.second);
                 }
             }
-
-            PluginResult message = new PluginResult(PluginResult.Status.OK, msgData);
-            message.setKeepCallback(true);
-            mSubscriptionCallbackCtx.sendPluginResult(message);
+            sendEvent(msgData);
         }
         catch (JSONException e) {
-            Log.e(TAG, "ERROR - Unable to send a read action.");
+            Log.e(TAG, "ERROR - Unable to send an event.");
         }
+    }
+
+    private void sendEvent(JSONObject msgData) {
+        PluginResult message = new PluginResult(PluginResult.Status.OK, msgData);
+        message.setKeepCallback(true);
+        mSubscriptionCallbackCtx.sendPluginResult(message);
     }
 
     private Pair<String, String>[] parseRfidData(String rfidData) {
@@ -317,9 +366,10 @@ public class BluebirdReader extends CordovaPlugin {
             return "Reader has low battery.";
         case SDConsts.RFResult.NOT_INVENTORY_STATE:
             return "Reader is not currently reading.";
+        case SDConsts.RFResult.ARGUMENT_ERROR:
+            return "Wrong argument was specified.";
         default:
             return defaultErrorMsg;
         }
     }
 }
-

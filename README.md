@@ -1,6 +1,8 @@
 # Bluebird RFID/Barcode Reader Plugin
 This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+.
 
+Documentation will be updated later I hope.
+
 ## Requirements
 * Cordova 6.4.0+
 * Android 4.1+
@@ -8,12 +10,12 @@ This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900
 
 ## Limitations
 * iOS is not implemented yet.
-* Only one Bluebird reader can be connected.
+* Only one Bluebird reader can be connected. - Bluebird library issue
 * This plugin does not handle searching for bluetooth devices.
 
 ## Issues
-* Disconnecting different bluetooth device disconnects bluebird reader as well. There is an issue inside the library 
-that I had to use and there was no way around it.
+* Disconnecting different bluetooth device disconnects Bluebird reader as well.
+  There is a bug inside library provided by Bluebird.
 
 ## Install
 `cordova plugin add https://github.com/PreciousBiscuit/cordova-plugin-bluebird-reader.git`
@@ -23,6 +25,7 @@ that I had to use and there was no way around it.
 * [bluebirdReader.disconnect](#disconnect)
 * [bluebirdReader.subscribe](#subscribe)
 * [bluebirdReader.unsubscribe](#unsubscribe)
+* [bluebirdReader.execute](#execute)
 
 ### connect
 Connects to a bluebird device. If device is disconnected, errorCallback would be called with "disconnected" message.
@@ -86,3 +89,9 @@ events is successCallback called. Duplicities are not handled.
 
 ##### Errors
 None
+
+### execute
+Executes a command on Bluebird device.
+
+`bluebirdReader.execute(successCallback, errorCallback, command, params)`
+

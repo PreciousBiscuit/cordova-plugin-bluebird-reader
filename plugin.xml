@@ -41,6 +41,10 @@
       target-dir="src/land/cookie/cordova/plugin/bluebirdreader"
     />
     <source-file
+      src="src/android/BluebirdCommands.java"
+      target-dir="src/land/cookie/cordova/plugin/bluebirdreader"
+    />
+    <source-file
       src="src/android/BluebirdMessageHandler.java"
       target-dir="src/land/cookie/cordova/plugin/bluebirdreader"
     />

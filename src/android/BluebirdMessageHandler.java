@@ -11,7 +11,7 @@ public class BluebirdMessageHandler extends Handler {
 
     private BluebirdReader mReader;
 
-    BluebirdMessageHandler(BluebirdReader reader) {
+    protected BluebirdMessageHandler(BluebirdReader reader) {
         mReader = reader;
     }
 
@@ -57,6 +57,9 @@ public class BluebirdMessageHandler extends Handler {
             case SDConsts.SDCmdMsg.TRIGGER_RELEASED: // 42
                 mReader.stopRfidReading();
             break;
+            case SDConsts.SDCmdMsg.SLED_BATTERY_STATE_CHANGED:
+                mReader.notifyBatterLevel(msg.arg2);
+            break;
             }
         break;
         case SDConsts.Msg.RFMsg: // 0
@@ -65,6 +68,12 @@ public class BluebirdMessageHandler extends Handler {
                 if (msg.arg2 == SDConsts.RFResult.SUCCESS && msg.obj != null) {
                     mReader.notifyRfidRead(msg.obj.toString());
                 }
+            break;
+            case SDConsts.RFCmdMsg.REGION_CHANGE_START:
+                mReader.notifyRegionChange("start");
+            break;
+            case SDConsts.RFCmdMsg.REGION_CHANGE_END:
+                mReader.notifyRegionChange("end");
             break;
             }
         break;
