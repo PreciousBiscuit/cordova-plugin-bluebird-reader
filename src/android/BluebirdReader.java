@@ -301,8 +301,8 @@ public class BluebirdReader extends CordovaPlugin {
 
         String[] parts = rfidData.split(";");
         Pair<String, String>[] data = new Pair[parts.length];
-        // There is some magical number (3000) at the beginning of the RFID tag.
-        data[0] = new Pair("data", parts[0].replaceFirst("^3000", ""));
+        // There is some magical number (3xxx) at the beginning of the RFID tag.
+        data[0] = new Pair("data", parts[0].replaceFirst("^\\d{4}", ""));
 
         for (int i = 1; i < parts.length; i++) {
             String[] info = parts[i].split(":");
