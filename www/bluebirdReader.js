@@ -23,6 +23,7 @@ const bluebirdReader = {
     getAvailableRegions: 'getAvailableRegions',
     getRegion: 'getRegion',
     setRegion: 'setRegion',
+    getAvailableRFModes: 'getAvailableRFModes',
     getRFMode: 'getRFMode',
     setRFMode: 'setRFMode',
     getAntennaPower: 'getAntennaPower',

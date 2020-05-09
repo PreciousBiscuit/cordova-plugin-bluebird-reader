@@ -19,6 +19,36 @@ public class BluebirdCommands {
         PluginResult execute(JSONArray params, BTReader reader);
     }
 
+    private static class RFMode {
+        private String mName, mRTModulation, mTRModulation;
+        private float mTari;
+        private int mIndex, mLF;
+
+        public RFMode(int index, String name, String rtModulation, float tari, String trModulation, int lf) {
+            mIndex = index;
+            mName = name;
+            mRTModulation = rtModulation;
+            mTari = tari;
+            mTRModulation = trModulation;
+            mLF = lf;
+        }
+
+        public JSONObject toJson() {
+            JSONObject obj = new JSONObject();
+
+            try {
+                obj.put("index", mIndex);
+                obj.put("name", mName);
+                obj.put("rtModulation", mRTModulation);
+                obj.put("tari", mTari);
+                obj.put("trModulation", mTRModulation);
+                obj.put("lf", mLF);
+            }
+            catch (JSONException ex) {}
+            return obj;
+        }
+    }
+
     // Same naming as SDConsts.RFRegion enum
     private static final String[] sRegionList = {
         "KOREA",
@@ -55,9 +85,11 @@ public class BluebirdCommands {
         "EGYPT",
         "CHILE",
     };
-    // Same naming as SDConsts.RFMode enum
-    private static String[] sRFModeList = {
-        "DSB_ASK_1", "PB_ASK_1", "PB_ASK_2", "DSB_ASK_2"
+    private static final RFMode[] sRFModeList = {
+        new RFMode(0, "DSB_ASK_1", "DSB_ASK", 25f, "FM0", 40),
+        new RFMode(1, "PB_ASK_1", "PB_ASK", 25f, "Miller-4", 250),
+        new RFMode(2, "PB_ASK_2", "PB_ASK", 25f, "Miller-4", 300),
+        new RFMode(3, "DSB_ASK_2", "DSB_ASK", 6.25f, "FM0", 400),
     };
     private static final String sRegionPattern = "[;:](.+?)=\\d+;";
     private Map<String, Command> mCommandMap;
@@ -70,6 +102,7 @@ public class BluebirdCommands {
         mCommandMap.put("getAvailableRegions",  this::getAvailableRegions);
         mCommandMap.put("getRegion",            this::getRegion);
         mCommandMap.put("setRegion",            this::setRegion);
+        mCommandMap.put("getAvailableRFModes",  this::getAvailableRFModes);
         mCommandMap.put("getRFMode",            this::getRFMode);
         mCommandMap.put("setRFMode",            this::setRFMode);
         mCommandMap.put("getAntennaPower",      this::getAntennaPower);
@@ -167,18 +200,24 @@ public class BluebirdCommands {
         return resultError("Incorrect argument; expected integer");
     }
 
+    protected PluginResult getAvailableRFModes(JSONArray ignoreParams, BTReader ignoreReader) {
+        // There is no such method on the reader so all those values were taken from documentation.
+        JSONArray response = new JSONArray();
+
+        for (RFMode mode : sRFModeList) {
+            response.put(mode.toJson());
+        }
+        return resultSuccess(response);
+    }
+
     protected PluginResult getRFMode(JSONArray ignoreParams, BTReader reader) {
         int value = reader.RF_GetRFMode();
         if (value < 0)
             return resultError(getRfError(value, "Unknown error: " + Integer.toString(value)));
 
         try {
-            JSONObject response = new JSONObject();
-            response.put("index", value);
-            response.put("name", sRFModeList[value]);
-            return resultSuccess(response);
+            return resultSuccess(sRFModeList[value].toJson());
         }
-        catch (JSONException ex) {}
         catch (ArrayIndexOutOfBoundsException ex) {}
         return resultError("Error parsing value");
     }
