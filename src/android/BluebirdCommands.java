@@ -91,7 +91,7 @@ public class BluebirdCommands {
         new RFMode(2, "PB_ASK_2", "PB_ASK", 25f, "Miller-4", 300),
         new RFMode(3, "DSB_ASK_2", "DSB_ASK", 6.25f, "FM0", 400),
     };
-    private static final String sRegionPattern = "(.+?)=\\d+;";
+    private static final String sRegionPattern = "(.+?)=(\\d+);";
     private Map<String, Command> mCommandMap;
     private Pattern mRegionRegex = null;
 
@@ -160,8 +160,8 @@ public class BluebirdCommands {
 
             while (matcher.find()) {
                 JSONObject region = new JSONObject();
-                region.put("index", Integer.parseInt(matcher.group(0)));
-                region.put("name", matcher.group(1));
+                region.put("name", matcher.group(0));
+                region.put("index", Integer.parseInt(matcher.group(1)));
                 response.put(region);
             }
             if (response.length() == 0)
