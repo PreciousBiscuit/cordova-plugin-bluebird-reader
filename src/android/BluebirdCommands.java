@@ -1,5 +1,6 @@
 package land.cookie.cordova.plugin.bluebirdreader;
 
+// import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -160,8 +161,8 @@ public class BluebirdCommands {
 
             while (matcher.find()) {
                 JSONObject region = new JSONObject();
-                region.put("name", matcher.group(0));
-                region.put("index", Integer.parseInt(matcher.group(1)));
+                region.put("name", matcher.group(1));
+                region.put("index", Integer.parseInt(matcher.group(2)));
                 response.put(region);
             }
             if (response.length() == 0)
