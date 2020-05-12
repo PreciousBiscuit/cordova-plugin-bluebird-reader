@@ -28,6 +28,8 @@ const bluebirdReader = {
     setRFMode: 'setRFMode',
     getAntennaPower: 'getAntennaPower',
     setAntennaPower: 'setAntennaPower',
+    getToggle: 'getToggle',
+    setToggle: 'setToggle',
   },
   execute(successCallback, errorCallback, command, params) {
     cordova.exec(successCallback, errorCallback, serviceName, arguments.callee.name, [command, params])

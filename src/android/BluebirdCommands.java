@@ -108,6 +108,8 @@ public class BluebirdCommands {
         mCommandMap.put("setRFMode",            this::setRFMode);
         mCommandMap.put("getAntennaPower",      this::getAntennaPower);
         mCommandMap.put("setAntennaPower",      this::setAntennaPower);
+        mCommandMap.put("getToggle",            this::getToggle);
+        mCommandMap.put("setToggle",            this::setToggle);
         mRegionRegex = Pattern.compile(sRegionPattern);
     }
 
@@ -247,6 +249,25 @@ public class BluebirdCommands {
         try {
             int value = params.getInt(0);
             int result = reader.RF_SetRadioPowerState(value);
+            if (result != 0)
+                return resultError(getRfError(result, "Unknown error: " + Integer.toString(result)));
+            return resultSuccess();
+        }
+        catch (JSONException ex) {}
+        return resultError("Incorrect argument; expected integer");
+    }
+
+    protected PluginResult getToggle(JSONArray ignoreParams, BTReader reader) {
+        int result = reader.RF_GetToggle();
+        if (result < 0)
+            return resultError(getRfError(result, "Unknown error: " + Integer.toString(result)));
+        return resultSuccess(result);
+    }
+
+    protected PluginResult setToggle(JSONArray params, BTReader reader) {
+        try {
+            int value = params.getInt(0);
+            int result = reader.RF_SetToggle(value);
             if (result != 0)
                 return resultError(getRfError(result, "Unknown error: " + Integer.toString(result)));
             return resultSuccess();
