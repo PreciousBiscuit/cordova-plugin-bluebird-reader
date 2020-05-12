@@ -25,6 +25,7 @@ public class BluebirdReader extends CordovaPlugin {
     private CallbackContext mConnectionCallbackCtx = null;
     private CallbackContext mSubscriptionCallbackCtx = null;
     private CallbackContext mDisconnectCallbackCtx = null;
+    private String previousRfidData = null;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -138,10 +139,16 @@ public class BluebirdReader extends CordovaPlugin {
         if (mSubscriptionCallbackCtx == null)
             return;
 
-        Pair<String, String>[] data = parseRfidData(rfidData);
-        if (data != null) {
-            sendEvent("rfidRead", data);
+        if (rfidData == null || rfidData.isEmpty()) {
+            Log.e(TAG, "ERROR - Received incorrect RFID data.");
+            return;
         }
+        if (rfidData.equals(previousRfidData))
+            return;
+
+        previousRfidData = rfidData;
+        Pair<String, String>[] data = parseRfidData(rfidData);
+        sendEvent("rfidRead", data);
     }
 
     protected void notifyBarcodeReadStart() {
@@ -294,11 +301,6 @@ public class BluebirdReader extends CordovaPlugin {
     }
 
     private Pair<String, String>[] parseRfidData(String rfidData) {
-        if (rfidData == null || rfidData.isEmpty()) {
-            Log.e(TAG, "ERROR - Received incorrect RFID data.");
-            return null;
-        }
-
         String[] parts = rfidData.split(";");
         Pair<String, String>[] data = new Pair[parts.length];
         // There is some magical number (3xxx) at the beginning of the RFID tag.
