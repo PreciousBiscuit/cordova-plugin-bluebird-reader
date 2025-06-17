@@ -1,7 +1,7 @@
 # Bluebird RFID/Barcode Reader Plugin
 
 > [!CAUTION]
-> **Plugin does not work when targeting Android API level 14+.**
+> **Plugin does not work when targeting Android 14+ (API level 34+).**
 
 This plugin allows you to communicate with Bluebird rfid/barcode readers (RFR900) over bluetooth 2.0+.
 
